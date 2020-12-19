@@ -7,6 +7,7 @@ const http = require("http");
 const cors = require('cors');
 const path = require('path');
 
+app.use(cors());
 app.use(express.static(__dirname + '/'));
 
 app.get('/data', (request, response) => {
@@ -14,7 +15,7 @@ app.get('/data', (request, response) => {
 });
 
 
-app.get('/ta', cors(), (request, response) => {
+app.get('/ta', (request, response) => {
   http.get("http://admin:admin@192.168.0.240/INCLUDE/api.cgi?jsonnode=1&jsonparam=I,O", res => {
     let data = "";
     res.on("data", d => {

@@ -1,0 +1,130 @@
+<!-- Styles -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 500px;
+}
+
+</style>
+
+<!-- Resources -->
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+
+<!-- Chart code -->
+<script>
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+var chart = am4core.create("chartdiv", am4charts.XYChart);
+// Increase contrast by taking evey second color
+chart.colors.step = 2;
+
+var data = [];
+var value = 50;
+var value2 = 50;
+for(var i = 0; i < 300; i++){
+  var date = new Date();
+  date.setHours(0,0,0,0);
+  date.setDate(i);
+  value -= Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
+  value2 -= Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
+  data.push({date:date, value: value, value2: value2});
+}
+
+chart.data = data;
+
+var interfaceColors = new am4core.InterfaceColorSet();
+
+// Create axes
+var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+dateAxis.renderer.minGridDistance = 60;
+
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+valueAxis.title.text = "l/min";
+valueAxis.syncWithAxis = chart.yAxes.getIndex(0);
+
+var valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
+valueAxis2.title.text = "bar";
+valueAxis2.syncWithAxis = chart.yAxes.getIndex(0);
+
+// Create series
+var series = chart.series.push(new am4charts.LineSeries());
+series.dataFields.valueY = "value";
+series.dataFields.dateX = "date";
+series.tooltipText = "{value} l/min\n{date}";
+series.yAxis = valueAxis;
+series.name = "Airflow";
+series.tensionX = 0.8;
+series.showOnInit = true;
+
+series.tooltip.pointerOrientation = "vertical";
+
+var bullet = series.bullets.push(new am4charts.CircleBullet());
+bullet.circle.stroke = interfaceColors.getFor("background");
+bullet.circle.strokeWidth = 2;
+
+var series2 = chart.series.push(new am4charts.LineSeries());
+series2.dataFields.valueY = "value2";
+series2.dataFields.dateX = "date";
+series2.tooltipText = "{value2} bar\n{date}";
+series2.yAxis = valueAxis2;
+series2.name = "Pressure";
+series2.tensionX = 0.8;
+series2.showOnInit = true;
+
+series2.tooltip.pointerOrientation = "vertical";
+
+var bullet = series2.bullets.push(new am4charts.Bullet());
+bullet.width = 10;
+bullet.height = 10;
+bullet.horizontalCenter = "middle";
+bullet.verticalCenter = "middle";
+      
+      var rectangle = bullet.createChild(am4core.Rectangle);
+      rectangle.stroke = interfaceColors.getFor("background");
+      rectangle.strokeWidth = 2;
+      rectangle.width = 10;
+      rectangle.height = 10;
+
+
+
+
+
+valueAxis.renderer.line.strokeOpacity = 1;
+  valueAxis.renderer.line.strokeWidth = 2;
+  valueAxis.renderer.line.stroke = series.stroke;
+  valueAxis.renderer.labels.template.fill = series.stroke;
+  valueAxis.renderer.opposite = false;
+
+  
+valueAxis2.renderer.line.strokeOpacity = 1;
+  valueAxis2.renderer.line.strokeWidth = 2;
+  valueAxis2.renderer.line.stroke = series2.stroke;
+  valueAxis2.renderer.labels.template.fill = series2.stroke;
+  valueAxis2.renderer.opposite = true;
+
+
+chart.legend = new am4charts.Legend();
+
+
+// Add cursor
+chart.cursor = new am4charts.XYCursor();
+
+chart.cursor = new am4charts.XYCursor();
+// chart.cursor.snapToSeries = series;
+chart.cursor.xAxis = dateAxis;
+
+//chart.scrollbarY = new am4core.Scrollbar();
+chart.scrollbarX = new am4core.Scrollbar();
+chart.scrollbarX.parent = chart.bottomAxesContainer;
+
+}); // end am4core.ready()
+</script>
+
+<!-- HTML -->
+<div id="chartdiv"></div>
